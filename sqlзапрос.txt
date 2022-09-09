@@ -1,32 +1,49 @@
+Для начала создадим таблицу продукты.
+
 CREATE TABLE Product(
-	Id bigint IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Name nvarchar(128) NOT NULL
+	Id SERIAL PRIMARY KEY,
+	Name VARCHAR (50) NOT NULL
 );
+
+После создаем таблицу категории.
 
 CREATE TABLE Category(
-	Id smallint IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	Name nvarchar(256) NOT NULL
+	Id SERIAL PRIMARY KEY,
+	Name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE ProductCategory(
-	Id bigint IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	ProductId smallint NOT NULL,
-	CategoryId smallint NOT NULL
+После создадим таблицу в которой будут происходить связи.
+
+CREATE TABLE CategoryProduct(
+	Id SERIAL PRIMARY KEY,
+	IdProduct INTEGER NOT NULL,
+	IdCategory INTEGER NOT NULL
 );
 
-ALTER TABLE ProductCategory  
-ADD CONSTRAINT FK_ProductCategory_Product_ProductId 
-FOREIGN KEY(ProductId)
+После изменим таблицу CategoryProduct и добавим связь по ID 
+с таблицей Product и зададим имя KEY_ProductId 
+
+ALTER TABLE CategoryProduct  
+ADD CONSTRAINT KEY_ProductId 
+FOREIGN KEY(IdProduct)
 REFERENCES Product (Id);
 
-ALTER TABLE ProductCategory
-ADD CONSTRAINT FK_ProductCategory_Category_CategoryId 
-FOREIGN KEY(CategoryId)
+Следубщим шагом будет досавление связи с таблицей Category
+
+ALTER TABLE CategoryProduct
+ADD CONSTRAINT KEY_CategoryId 
+FOREIGN KEY(IdCategory)
 REFERENCES Category (Id);
 
-   Select p.Name as ProductName, 
+
+После напишем запрос для выбора всех пар 
+«Имя продукта – Имя категории».
+
+Select p.Name as ProductName, 
 	      c.Name as CategoryName
      from Product p
 left join ProductCategory pc on pc.ProductId = p.Id
 left join Category c on pc.CategoryId = c.Id
  order by p.Name, c.Name
+
+
